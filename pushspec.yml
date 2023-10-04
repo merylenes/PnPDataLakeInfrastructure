@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - cd $HOME/.goenv && git pull --ff-only && cd -
+      - goenv install 1.18.0
+      - goenv local 1.18.0
+      - pwd
+  pre_build:
+    commands:
+      - echo Pre Build started on `date`
+      - echo CODEBUILD_SOURCE_VERSION $(CODEBUILD_SOURCE_VERSION)
+      - curl -s -qL -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - unzip -o terraform.zip -d /usr/bin
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Command ${COMMAND}
+      - echo Environment ${ENVIRONMENT}
+      - echo Role ARN ${CLIENT_ROLE_ARN}
+      - ls -al
+      - make terraform_validate
+  post_build:
+    commands:
+      - echo Build completed on `date`
